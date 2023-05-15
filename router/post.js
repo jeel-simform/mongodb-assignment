@@ -3,6 +3,7 @@ const router = express.Router();
 
 const Post = require("../model/Post");
 const auth = require("../middleware/auth");
+const checkId = require("../middleware/checkId");
 
 router.post("/post", auth, async (req, res) => {
   try {
@@ -12,7 +13,7 @@ router.post("/post", auth, async (req, res) => {
     const post = await Post.create({
       title,
       description,
-      creator: req.user.user._id,
+      creator: req.user._id,
     });
     console.log(post);
     res.status(200).json({
@@ -25,7 +26,7 @@ router.get("/myposts", auth, async (req, res) => {
   try {
     // const { id } = req.params;
     // console.log(req.user.user._id);
-    const post = await Post.find({ creator: req.user.user._id });
+    const post = await Post.find({ creator: req.user._id });
     res.json({
       post,
     });
@@ -39,7 +40,7 @@ router.get("/myposts", auth, async (req, res) => {
 router.get("/mypost/:id", auth, async (req, res) => {
   try {
     const { id } = req.params;
-    const post = await Post.find({ creator: req.user.user._id, _id: id });
+    const post = await Post.find({ creator: req.user._id, _id: id });
     res.json({
       post,
     });
@@ -146,13 +147,35 @@ router.get("/posts-search", async (req, res) => {
   }
 });
 
-router.put("post", auth, async (req, res) => {
+router.put("/post/:id", auth, checkId, async (req, res) => {
   try {
-    const post = await Post.findOneAndUpdate({ _id: req.params.id }, { $set });
+    const { id } = req.params;
+    const post = await Post.findByIdAndUpdate(id, req.body, {
+      new: true,
+      runValidator: true,
+    });
+    return res.status(200).json({
+      post,
+    });
   } catch (err) {
     return res.status(500).json({
-      message: err.message,
+      message: err,
     });
   }
 });
+
+router.delete("/post/:id", auth, checkId, async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Post.findByIdAndDelete(id);
+    return res.status(200).json({
+      message: "post deleted successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: err,
+    });
+  }
+});
+
 module.exports = router;

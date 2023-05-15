@@ -46,6 +46,7 @@ router.post("/login", async (req, res) => {
     }
 
     const user = await User.findOne({ email }).select("+password");
+    // console.log("user in lign", user);
 
     if (!user || !(await user.correctPassword(password, user.password))) {
       return res.status(404).json({
