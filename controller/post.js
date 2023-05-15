@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 const Post = require("../model/Post");
 const { sendResponse } = require("../utils/success");
 const { error } = require("../utils/error");
@@ -70,7 +71,7 @@ const countPost = async (req, res) => {
     return error(res, 500, err.message);
   }
 };
-const projection = async (req, res) => {
+const projectionPost = async (req, res) => {
   try {
     const { field, sort } = req.query;
     const projection = {};
@@ -139,7 +140,7 @@ module.exports = {
   myPost,
   allPosts,
   countPost,
-  projection,
+  projectionPost,
   searchPost,
   updatePost,
   deletePost,

@@ -1,4 +1,5 @@
 const express = require("express");
+
 const router = express.Router();
 
 const auth = require("../middleware/auth");
@@ -14,7 +15,7 @@ const {
   myPost,
   allPosts,
   countPost,
-  projection,
+  projectionPost,
   searchPost,
   updatePost,
   deletePost,
@@ -30,7 +31,7 @@ router.get("/posts", allPosts);
 
 router.get("/total-post", countPost);
 
-router.get("/projection-sort", projection);
+router.get("/projection-sort", projectionPost);
 
 router.get("/posts-search", searchPost);
 

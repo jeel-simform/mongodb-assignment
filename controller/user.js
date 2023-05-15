@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 const User = require("../model/User");
 const { sendResponse } = require("../utils/success");
 const { error } = require("../utils/error");
