@@ -24,5 +24,5 @@ mongoose
   });
 
 app.listen(port, () => {
-  console.log("server is listen on port" + port);
+  console.log("server is listen on port " + port);
 });

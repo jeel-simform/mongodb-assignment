@@ -1,9 +1,8 @@
-// const jwt = require("jsonwebtoken");
 const Post = require("../model/Post");
+const { error } = require("../utils/error");
 
 const checkId = async (req, res, next) => {
   try {
-    // console.log("checkid");
     const { id } = req.params;
 
     const post = Post.findById(id);
@@ -13,9 +12,7 @@ const checkId = async (req, res, next) => {
       throw new Error("you have no permissions to update another user post");
     }
   } catch (err) {
-    return res.status(404).json({
-      message: err.message,
-    });
+    return error(res, 404, err.message);
   }
 };
 module.exports = checkId;

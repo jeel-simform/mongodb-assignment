@@ -1,4 +1,6 @@
 const User = require("../model/User");
+const { sendResponse } = require("../utils/success");
+const { error } = require("../utils/error");
 
 const register = async (req, res) => {
   try {
@@ -15,16 +17,10 @@ const register = async (req, res) => {
       ),
       httpOnly: true,
     };
-    // console.log(token);
     res.cookie("jwt", token, cookieOptions);
-    res.status(200).json({
-      token,
-      data: {
-        user,
-      },
-    });
+    return sendResponse(res, 200, { user, token });
   } catch (err) {
-    res.status(500).json(err);
+    return error(res, 500, err.message);
   }
 };
 
@@ -32,18 +28,13 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      return res.status(404).json({
-        message: "please provide email and password",
-      });
+      return sendResponse(res, 404, "please provide email and password");
     }
 
     const user = await User.findOne({ email }).select("+password");
-    // console.log("user in lign", user);
 
     if (!user || !(await user.correctPassword(password, user.password))) {
-      return res.status(404).json({
-        message: "invalid credentials",
-      });
+      return error(res, 404, "Invalid credentials");
     }
     const token = await user.generateAuthToken();
     const cookieOptions = {
@@ -52,18 +43,10 @@ const login = async (req, res) => {
       ),
       httpOnly: true,
     };
-    // console.log(token);
     res.cookie("jwt", token, cookieOptions);
-    res.status(200).json({
-      token,
-      data: {
-        user,
-      },
-    });
+    return sendResponse(res, 200, { user, token });
   } catch (err) {
-    res.status(500).json({
-      message: err,
-    });
+    return error(res, 500, err.message);
   }
 };
 
@@ -73,11 +56,9 @@ const updateUser = async (req, res) => {
       new: true,
       runValidators: true,
     });
-    return res.status(200).json({
-      updatedUser,
-    });
+    return sendResponse(res, 200, updatedUser);
   } catch (err) {
-    console.log();
+    return error(res, 500, err.message);
   }
 };
 

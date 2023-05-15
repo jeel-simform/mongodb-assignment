@@ -1,47 +1,37 @@
 const Post = require("../model/Post");
+const { sendResponse } = require("../utils/success");
+const { error } = require("../utils/error");
 
 const createPost = async (req, res) => {
   try {
-    // console.log(req.body);
     const { title, description } = req.body;
-    // console.log(req.user.);
     const post = await Post.create({
       title,
       description,
       creator: req.user._id,
     });
-    console.log(post);
-    res.status(200).json({
-      post,
-    });
-  } catch (err) {}
+    return sendResponse(res, 200, post);
+  } catch (err) {
+    return error(res, 500, err.message);
+  }
 };
 
 const myPosts = async (req, res) => {
   try {
-    // const { id } = req.params;
-    // console.log(req.user.user._id);
     const post = await Post.find({ creator: req.user._id });
-    res.json({
-      post,
-    });
+
+    return sendResponse(res, 200, post);
   } catch (err) {
-    return res.status(500).json({
-      message: err,
-    });
+    return error(res, 500, err.message);
   }
 };
 const myPost = async (req, res) => {
   try {
     const { id } = req.params;
     const post = await Post.find({ creator: req.user._id, _id: id });
-    res.json({
-      post,
-    });
+    return sendResponse(res, 200, post);
   } catch (err) {
-    return res.status(500).json({
-      message: err,
-    });
+    return error(res, 500, err.message);
   }
 };
 
@@ -50,13 +40,9 @@ const allPosts = async (req, res) => {
     const { page, limit, ...filter } = req.query;
     const skip = (page - 1) * limit;
     const post = await Post.find(filter).limit(limit).skip(skip);
-    res.status(200).json({
-      post,
-    });
+    return sendResponse(res, 200, post);
   } catch (err) {
-    return res.status(500).json({
-      message: err.message,
-    });
+    return error(res, 500, err.message);
   }
 };
 
@@ -79,13 +65,9 @@ const countPost = async (req, res) => {
         },
       },
     ]);
-    res.status(200).json({
-      post,
-    });
+    return sendResponse(res, 200, post);
   } catch (err) {
-    return res.status(500).json({
-      message: err.message,
-    });
+    return error(res, 500, err.message);
   }
 };
 const projection = async (req, res) => {
@@ -114,28 +96,18 @@ const projection = async (req, res) => {
         },
       },
     ]);
-
-    res.status(200).json({
-      post,
-    });
+    return sendResponse(res, 200, post);
   } catch (err) {
-    return res.status(500).json({
-      message: err.message,
-    });
+    return error(res, 500, err.message);
   }
 };
 const searchPost = async (req, res) => {
   try {
     const { search } = req.query;
     const posts = await Post.find({ $text: { $search: search } });
-
-    res.status(200).json({
-      posts,
-    });
+    return sendResponse(res, 200, posts);
   } catch (err) {
-    return res.status(500).json({
-      message: err.message,
-    });
+    return error(res, 500, err.message);
   }
 };
 
@@ -146,26 +118,18 @@ const updatePost = async (req, res) => {
       new: true,
       runValidator: true,
     });
-    return res.status(200).json({
-      post,
-    });
+    return sendResponse(res, 200, post);
   } catch (err) {
-    return res.status(500).json({
-      message: err,
-    });
+    return error(res, 500, err.message);
   }
 };
 const deletePost = async (req, res) => {
   try {
     const { id } = req.params;
     await Post.findByIdAndDelete(id);
-    return res.status(200).json({
-      message: "post deleted successfully",
-    });
+    return sendResponse(res, 200, "post deleted successfully");
   } catch (err) {
-    return res.status(500).json({
-      message: err,
-    });
+    return error(res, 500, err.message);
   }
 };
 

@@ -1,8 +1,4 @@
-const {
-  createPostSchema,
-  updatePostSchema,
-  getPostSchema,
-} = require("./postSchema");
+const { createPostSchema, updatePostSchema } = require("./postSchema");
 
 const createPostValidator = async (req, res, next) => {
   const { error } = createPostSchema.validate(req.body);
