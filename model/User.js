@@ -37,8 +37,8 @@ userSchema.methods.correctPassword = async function (
 userSchema.methods.generateAuthToken = async function () {
   // console.log("function called");
   const user = { ...this };
-  console.log("this ", this);
-  console.log("user", user);
+  // console.log("this ", this);
+  // console.log("user", user);
   user.password = undefined;
   // console.log(user);
   const token = jwt.sign({ user }, process.env.JWT_SECRET);
