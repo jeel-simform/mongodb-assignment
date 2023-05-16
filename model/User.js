@@ -19,18 +19,18 @@ const userSchema = mongoose.Schema({
   },
 });
 
-userSchema.pre("save", async function (next) {
+userSchema.pre("save", async function hashPassword(next) {
   this.password = await bcrypt.hash(this.password, 12);
   return next();
 });
 
-userSchema.methods.correctPassword = async function (
+userSchema.methods.correctPassword = async function correctPassword(
   candidatePassword,
   userPassword
 ) {
   return bcrypt.compare(candidatePassword, userPassword);
 };
-userSchema.methods.generateAuthToken = async function () {
+userSchema.methods.generateAuthToken = async function generateToken() {
   const user = { ...this };
   user.password = undefined;
   const token = jwt.sign({ user }, process.env.JWT_SECRET);
