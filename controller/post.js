@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 const Post = require("../model/Post");
 const { sendResponse } = require("../utils/success");
-const { error } = require("../utils/error");
+const { Error } = require("../utils/error");
 
 const createPost = async (req, res) => {
   try {
@@ -13,7 +13,7 @@ const createPost = async (req, res) => {
     });
     return sendResponse(res, 200, post);
   } catch (err) {
-    return error(res, 500, err.message);
+    return Error(res, 500, err.message);
   }
 };
 
@@ -23,7 +23,7 @@ const myPosts = async (req, res) => {
 
     return sendResponse(res, 200, post);
   } catch (err) {
-    return error(res, 500, err.message);
+    return Error(res, 500, err.message);
   }
 };
 const myPost = async (req, res) => {
@@ -32,7 +32,7 @@ const myPost = async (req, res) => {
     const post = await Post.find({ creator: req.user._id, _id: id });
     return sendResponse(res, 200, post);
   } catch (err) {
-    return error(res, 500, err.message);
+    return Error(res, 500, err.message);
   }
 };
 
@@ -43,7 +43,7 @@ const allPosts = async (req, res) => {
     const post = await Post.find(filter).limit(limit).skip(skip);
     return sendResponse(res, 200, post);
   } catch (err) {
-    return error(res, 500, err.message);
+    return Error(res, 500, err.message);
   }
 };
 
@@ -68,7 +68,7 @@ const countPost = async (req, res) => {
     ]);
     return sendResponse(res, 200, post);
   } catch (err) {
-    return error(res, 500, err.message);
+    return Error(res, 500, err.message);
   }
 };
 const projectionPost = async (req, res) => {
@@ -99,7 +99,7 @@ const projectionPost = async (req, res) => {
     ]);
     return sendResponse(res, 200, post);
   } catch (err) {
-    return error(res, 500, err.message);
+    return Error(res, 500, err.message);
   }
 };
 const searchPost = async (req, res) => {
@@ -108,7 +108,7 @@ const searchPost = async (req, res) => {
     const posts = await Post.find({ $text: { $search: search } });
     return sendResponse(res, 200, posts);
   } catch (err) {
-    return error(res, 500, err.message);
+    return Error(res, 500, err.message);
   }
 };
 
@@ -121,7 +121,7 @@ const updatePost = async (req, res) => {
     });
     return sendResponse(res, 200, post);
   } catch (err) {
-    return error(res, 500, err.message);
+    return Error(res, 500, err.message);
   }
 };
 const deletePost = async (req, res) => {
@@ -130,7 +130,7 @@ const deletePost = async (req, res) => {
     await Post.findByIdAndDelete(id);
     return sendResponse(res, 200, "post deleted successfully");
   } catch (err) {
-    return error(res, 500, err.message);
+    return Error(res, 500, err.message);
   }
 };
 

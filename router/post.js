@@ -23,7 +23,7 @@ const {
 
 router.post("/post", auth, createPostValidator, createPost);
 
-router.get("/myPosts", auth, myPosts);
+router.get("/my-posts", auth, myPosts);
 
 router.get("/myPost/:id", auth, myPost);
 

@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 const User = require("../model/User");
 const { sendResponse } = require("../utils/success");
-const { error } = require("../utils/error");
+const { Error } = require("../utils/error");
 
 const register = async (req, res) => {
   try {
@@ -12,16 +12,16 @@ const register = async (req, res) => {
       password,
     });
     const token = await user.generateAuthToken();
-    const cookieOptions = {
-      expires: new Date(
-        Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
-      ),
-      httpOnly: true,
-    };
-    res.cookie("jwt", token, cookieOptions);
+    // const cookieOptions = {
+    //   expires: new Date(
+    //     Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+    //   ),
+    //   httpOnly: true,
+    // };
+    // res.cookie("jwt", token, cookieOptions);
     return sendResponse(res, 200, { user, token });
   } catch (err) {
-    return error(res, 500, err.message);
+    return Error(res, 500, err.message);
   }
 };
 
@@ -35,19 +35,19 @@ const login = async (req, res) => {
     const user = await User.findOne({ email }).select("+password");
 
     if (!user || !(await user.correctPassword(password, user.password))) {
-      return error(res, 404, "Invalid credentials");
+      return Error(res, 404, "Invalid credentials");
     }
     const token = await user.generateAuthToken();
-    const cookieOptions = {
-      expires: new Date(
-        Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
-      ),
-      httpOnly: true,
-    };
-    res.cookie("jwt", token, cookieOptions);
+    // const cookieOptions = {
+    //   expires: new Date(
+    //     Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+    //   ),
+    //   httpOnly: true,
+    // };
+    // res.cookie("jwt", token, cookieOptions);
     return sendResponse(res, 200, { user, token });
   } catch (err) {
-    return error(res, 500, err.message);
+    return Error(res, 500, err.message);
   }
 };
 
@@ -59,7 +59,7 @@ const updateUser = async (req, res) => {
     });
     return sendResponse(res, 200, updatedUser);
   } catch (err) {
-    return error(res, 500, err.message);
+    return Error(res, 500, err.message);
   }
 };
 

@@ -1,5 +1,5 @@
 const Post = require("../model/Post");
-const { error } = require("../utils/error");
+const { Error } = require("../utils/error");
 
 const checkId = async (req, res, next) => {
   try {
@@ -12,7 +12,7 @@ const checkId = async (req, res, next) => {
     }
     throw new Error("you have no permissions to update another user post");
   } catch (err) {
-    return error(res, 404, err.message);
+    return Error(res, 404, err.message);
   }
 };
 module.exports = checkId;

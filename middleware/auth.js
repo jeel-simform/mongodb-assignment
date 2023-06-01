@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const { error } = require("../utils/error");
+const { Error } = require("../utils/error");
 
 const auth = async (req, res, next) => {
   try {
@@ -8,7 +8,7 @@ const auth = async (req, res, next) => {
     req.user = decoded.user;
     return next();
   } catch (err) {
-    return error(res, 500, "please authenticate");
+    return Error(res, 500, "Internal Server Error");
   }
 };
 module.exports = auth;
