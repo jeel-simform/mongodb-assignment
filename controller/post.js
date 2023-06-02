@@ -1,9 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 const Post = require("../model/Post");
-const { sendResponse } = require("../utils/success");
-const { Error } = require("../utils/error");
 
-const createPost = async (req, res) => {
+const createPost = async (req, res, next) => {
   try {
     const { title, description } = req.body;
     const post = await Post.create({
@@ -11,43 +9,42 @@ const createPost = async (req, res) => {
       description,
       creator: req.user._id,
     });
-    return sendResponse(res, 200, post);
+    return res.success("post created successfully", post);
   } catch (err) {
-    return Error(res, 500, err.message);
+    return next(err);
   }
 };
 
-const myPosts = async (req, res) => {
+const myPosts = async (req, res, next) => {
   try {
     const post = await Post.find({ creator: req.user._id });
-
-    return sendResponse(res, 200, post);
+    return res.success("Your All post", post);
   } catch (err) {
-    return Error(res, 500, err.message);
+    return next(err);
   }
 };
-const myPost = async (req, res) => {
+const myPost = async (req, res, next) => {
   try {
     const { id } = req.params;
     const post = await Post.find({ creator: req.user._id, _id: id });
-    return sendResponse(res, 200, post);
+    return res.success("Your Post", post);
   } catch (err) {
-    return Error(res, 500, err.message);
+    return next(err);
   }
 };
 
-const allPosts = async (req, res) => {
+const allPosts = async (req, res, next) => {
   try {
     const { page, limit, ...filter } = req.query;
     const skip = (page - 1) * limit;
     const post = await Post.find(filter).limit(limit).skip(skip);
-    return sendResponse(res, 200, post);
+    return res.success("All post", post);
   } catch (err) {
-    return Error(res, 500, err.message);
+    return next(err);
   }
 };
 
-const countPost = async (req, res) => {
+const countPost = async (req, res, next) => {
   try {
     const post = await Post.aggregate([
       {
@@ -66,12 +63,12 @@ const countPost = async (req, res) => {
         },
       },
     ]);
-    return sendResponse(res, 200, post);
+    return res.success("Count Post", post);
   } catch (err) {
-    return Error(res, 500, err.message);
+    return next(err);
   }
 };
-const projectionPost = async (req, res) => {
+const projectionPost = async (req, res, next) => {
   try {
     const { field, sort } = req.query;
     const projection = {};
@@ -97,40 +94,40 @@ const projectionPost = async (req, res) => {
         },
       },
     ]);
-    return sendResponse(res, 200, post);
+    return res.success("project post", post);
   } catch (err) {
-    return Error(res, 500, err.message);
+    return next(err);
   }
 };
-const searchPost = async (req, res) => {
+const searchPost = async (req, res, next) => {
   try {
     const { search } = req.query;
     const posts = await Post.find({ $text: { $search: search } });
-    return sendResponse(res, 200, posts);
+    return res.success("", posts);
   } catch (err) {
-    return Error(res, 500, err.message);
+    return next(err);
   }
 };
 
-const updatePost = async (req, res) => {
+const updatePost = async (req, res, next) => {
   try {
     const { id } = req.params;
     const post = await Post.findByIdAndUpdate(id, req.body, {
       new: true,
       runValidator: true,
     });
-    return sendResponse(res, 200, post);
+    return res.success("", post);
   } catch (err) {
-    return Error(res, 500, err.message);
+    return next(err);
   }
 };
-const deletePost = async (req, res) => {
+const deletePost = async (req, res, next) => {
   try {
     const { id } = req.params;
     await Post.findByIdAndDelete(id);
-    return sendResponse(res, 200, "post deleted successfully");
+    return res.success("Post deleted successfully");
   } catch (err) {
-    return Error(res, 500, err.message);
+    return next(err);
   }
 };
 

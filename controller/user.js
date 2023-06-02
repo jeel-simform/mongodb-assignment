@@ -1,9 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 const User = require("../model/User");
-const { sendResponse } = require("../utils/success");
-const { Error } = require("../utils/error");
 
-const register = async (req, res) => {
+const register = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
     const user = await User.create({
@@ -12,54 +10,40 @@ const register = async (req, res) => {
       password,
     });
     const token = await user.generateAuthToken();
-    // const cookieOptions = {
-    //   expires: new Date(
-    //     Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
-    //   ),
-    //   httpOnly: true,
-    // };
-    // res.cookie("jwt", token, cookieOptions);
-    return sendResponse(res, 200, { user, token });
+    return res.success("user created successfully", { user, token });
   } catch (err) {
-    return Error(res, 500, err.message);
+    return next(err);
   }
 };
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      return sendResponse(res, 404, "please provide email and password");
+      return res.missingCredentials("please provide email and password");
     }
 
     const user = await User.findOne({ email }).select("+password");
 
     if (!user || !(await user.correctPassword(password, user.password))) {
-      return Error(res, 404, "Invalid credentials");
+      return res.validationError();
     }
     const token = await user.generateAuthToken();
-    // const cookieOptions = {
-    //   expires: new Date(
-    //     Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
-    //   ),
-    //   httpOnly: true,
-    // };
-    // res.cookie("jwt", token, cookieOptions);
-    return sendResponse(res, 200, { user, token });
+    return res.success("login successfully", { user, token });
   } catch (err) {
-    return Error(res, 500, err.message);
+    return next(err);
   }
 };
 
-const updateUser = async (req, res) => {
+const updateUser = async (req, res, next) => {
   try {
     const updatedUser = await User.findByIdAndUpdate(req.user._id, req.body, {
       new: true,
       runValidators: true,
     });
-    return sendResponse(res, 200, updatedUser);
+    return res.success("user updated successfully", updatedUser);
   } catch (err) {
-    return Error(res, 500, err.message);
+    return next(err);
   }
 };
 
