@@ -15,5 +15,5 @@ router.post("/register", registerValidator, uniqueFieldChecker, register);
 
 router.post("/login", loginValidator, login);
 
-router.put("/user", auth, updateValidator, uniqueFieldChecker, updateUser);
+router.put("/update-me", auth, updateValidator, uniqueFieldChecker, updateUser);
 module.exports = router;

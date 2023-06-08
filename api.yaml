@@ -1,0 +1,396 @@
+---
+swagger: "2.0"
+info:
+  title: Social Media API
+  description: "Social Media API for creating , update, read post"
+  version: 1.0
+  contact:
+    email: "jeel.v@simformsolutions.com"
+  license:
+    name: Apache 2.0
+    url: "http://apache.org/"
+  servers:
+    -url: "http://localhost:3000/"
+    description: "this is my local server"
+  tags:
+    - name: User
+      description: api for user
+
+    - name: Post
+      description: api for post
+
+schemes: [http, https]
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Bearer authorization
+    in: header
+    value: "Bearer {{token}}"
+
+paths:
+  /register:
+    post:
+      summary: Adds a new user
+      tags:
+        - User
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: "#/components/schema/UserCreateRequest"
+
+      responses:
+        "200":
+          description: User created successfully
+          schema:
+            $ref: "#/components/schema/UserCreateResponse"
+        "400":
+          description: User Validation error
+        "500":
+          description: Internal Server Error
+  /login:
+    post:
+      summary: Login
+      tags:
+        - User
+      produces: -application/json
+      consumes: -application/json
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: "#/components/schema/UserLoginRequest"
+      responses:
+        "200":
+          description: User login successfully
+          schema:
+            $ref: "#/components/schema/UserCreateResponse"
+        "400":
+          description: User Validation error
+        "500":
+          description: Internal Server Error
+  /update-me:
+    patch:
+      summary: Update Profile
+      tags:
+        - User
+      security:
+        - JWTAuth: []
+
+      produces: -application/json
+      consumes: -application/json
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: "#/components/schema/UserCreateRequest"
+      responses:
+        "200":
+          description: Your Profile updated successfully
+          schema:
+            $ref: "#/components/schema/UserCreateResponse"
+        "400":
+          description: User Validation error
+        "500":
+          description: Internal Server Error
+  /post:
+    post:
+      summary: Create a new Post
+      tags:
+        - Post
+      security:
+        - Bearer: []
+
+      produces: -application/json
+      consumes: -application/json
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: "#components/schema/PostCreateRequest"
+      responses:
+        "200":
+          description: Post created successfully
+          schema:
+            $ref: "#components/schema/PostCreateResponse"
+        "400":
+          description: Post Validation Error
+        "500":
+          description: Internal Server Error
+  /my-posts:
+    get:
+      summary: Get my all post
+      tags:
+        - Post
+      security:
+        - JWTAuth: []
+
+      produces: -application/json
+      consumes: -application/json
+      responses:
+        "200":
+          description: All Post of user
+          schema:
+            $ref: "#components/schema/MyPostsResponse"
+        "500":
+          description: Internal Server Error
+  /posts:
+    get:
+      summary: Get all posts
+      tags:
+        - Post
+      produces: -application/json
+      responses:
+        "200":
+          description: All Post of user
+          schema:
+            $ref: "#components/schema/MyPostsResponse"
+        "500":
+          description: Internal Server Error
+  /total-post:
+    get:
+      summary: Get All Post count with username
+      tags:
+        - Post
+      produces: -application/json
+      consumes: -application/json
+      responses:
+        "200":
+          description: All post count with username
+          schema:
+            $ref: "#components/schema/MyPostCount"
+        "500":
+          description: Internal Server Error
+
+  /projection-sort:
+    get:
+      summary: Get Post with sort
+      tags:
+        - Post
+      produces: -application/json
+      consumes: -application/json
+      parameters:
+        - in: query
+          name: field
+          type: string
+
+        - in: query
+          name: sort
+          type: string
+      responses:
+        "200":
+          description: projection post
+          schema:
+            $ref: "#components/schema/MyPostsResponse"
+        "500":
+          description: Internal Server Error
+  /posts-search:
+    get:
+      summary: Get Post with search
+      tags:
+        - Post
+      produces: -application/json
+      parameters:
+        - in: query
+          name: search
+          type: string
+      responses:
+        "200":
+          description: projection post
+          schema:
+            $ref: "#components/schema/MyPostsResponse"
+        "500":
+          description: Internal Server Error
+  /post/{id}:
+    patch:
+      summary: update user post
+      tags:
+        - Post
+      security:
+        - JWTAuth: []
+
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - in: body
+          name: body
+          schema:
+            $ref: "#components/schema/PostCreateRequest"
+      responses:
+        "200":
+          description: update post
+          schema:
+            $ref: "#components/schema/PostCreateResponse"
+        "500":
+          description: Internal Server Error
+  /post{id}:
+    delete:
+      summary: delete post
+      tags:
+        - Post
+      security:
+        - JWTAuth: []
+
+      parameters:
+        - in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: delete post
+          schema:
+            $ref: "#components/schema/PostDelete"
+components:
+  schema:
+    UserCreateRequest:
+      type: object
+      required:
+        - username
+        - email
+        - password
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+
+    UserCreateResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+          example: 200
+        message:
+          type: string
+          example: user created successfully
+        data:
+          type: object
+          properties:
+            user:
+              $ref: "#/components/schema/User"
+            token:
+              type: string
+
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        _id:
+          type: string
+        __v:
+          type: integer
+          format:
+    Post:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        creator:
+          type: string
+        _id:
+          type: string
+        __v:
+          type: integer
+          format:
+
+    UserLoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    PostCreateRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+
+    PostCreateResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+          example: 200
+        message:
+          type: string
+          example: Post created successfully
+        data:
+          type: object
+          properties:
+            post:
+              $ref: "#/components/schema/Post"
+
+    MyPostsResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+          example: 200
+        message:
+          type: string
+          example: Your All Posts
+        data:
+          type: array
+          $ref: "#components/schema/Posts"
+
+    Posts:
+      type: object
+      properties:
+        _id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        __v:
+          type: integer
+          format: int32
+
+    MyPostCount:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+          example: 200
+        message:
+          type: string
+          example: Your All Posts
+        data:
+          type: array
+          $ref: "#components/schema/Count"
+
+    PostDelete:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+          example: 200
+        message:
+          type: string
+          example: Post successfully deleted

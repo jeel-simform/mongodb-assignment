@@ -7,7 +7,7 @@ const createPost = async (req, res, next) => {
     const post = await Post.create({
       title,
       description,
-      creator: req.user._id,
+      creator: req.user._doc._id,
     });
     return res.success("post created successfully", post);
   } catch (err) {

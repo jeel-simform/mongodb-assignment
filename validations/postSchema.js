@@ -3,7 +3,7 @@ const Joi = require("joi");
 const baseSchema = Joi.object({
   title: Joi.string(),
   description: Joi.string(),
-  creator: Joi.string(),
+  // creator: Joi.string(),
 });
 
 const createPostSchema = baseSchema

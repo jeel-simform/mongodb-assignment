@@ -6,8 +6,12 @@ const app = express();
 const mongoose = require("mongoose");
 const helmet = require("helmet");
 const morgan = require("morgan");
+const swaggerUI = require("swagger-ui-express");
+const YAML = require("yamljs");
 const { responseHelper } = require("./utils/response");
 const { errorMiddleware } = require("./utils/errorMiddleware");
+
+const swaggerJsDocs = YAML.load("./api.yaml");
 
 const userRouter = require("./router/user");
 const postRouter = require("./router/post");
@@ -15,6 +19,10 @@ const postRouter = require("./router/post");
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
+
+// const swaggerSpec = swaggerJsdoc(options);
+
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerJsDocs));
 
 app.use(responseHelper);
 const port = process.env.PORT || 3000;
