@@ -1,6 +1,6 @@
 const Post = require("../model/Post");
 
-const checkId = async (req, res, next) => {
+const authId = async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -14,4 +14,4 @@ const checkId = async (req, res, next) => {
     return next(err);
   }
 };
-module.exports = checkId;
+module.exports = authId;

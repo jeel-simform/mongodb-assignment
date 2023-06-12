@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 
 const auth = require("../middleware/auth");
-const checkId = require("../middleware/checkId");
+const authId = require("../middleware/authId");
 const {
   createPostValidator,
   updatePostValidator,
@@ -35,8 +35,8 @@ router.get("/projection-sort", projectionPost);
 
 router.get("/posts-search", searchPost);
 
-router.put("/post/:id", auth, checkId, updatePostValidator, updatePost);
+router.put("/post/:id", auth, authId, updatePostValidator, updatePost);
 
-router.delete("/post/:id", auth, checkId, deletePost);
+router.delete("/post/:id", auth, authId, deletePost);
 
 module.exports = router;
