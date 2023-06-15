@@ -1,4 +1,6 @@
-require("dotenv").config();
+require("dotenv").config({
+  path: process.env.NODE_ENV === "test" ? "test.env" : ".env",
+});
 
 const express = require("express");
 
@@ -37,12 +39,14 @@ app.use(errorMiddleware);
 mongoose
   .connect(process.env.DATABASE_URL)
   .then(() => {
-    console.log("database connection established");
+    console.log(`database connection established${process.env.DATABASE_URL}`);
   })
   .catch((err) => {
     console.log(`database connection error: ${err}`);
   });
-
-app.listen(port, () => {
-  console.log(`server is listen on port${port}`);
-});
+if (process.env.NODE_ENV !== "test") {
+  app.listen(port, () => {
+    console.log(`server is listen on port${port}`);
+  });
+}
+module.exports = app;

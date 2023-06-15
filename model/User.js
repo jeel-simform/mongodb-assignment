@@ -31,9 +31,9 @@ userSchema.methods.correctPassword = async function correctPassword(
   return bcrypt.compare(candidatePassword, userPassword);
 };
 userSchema.methods.generateAuthToken = async function generateToken() {
-  const user = { ...this };
-  user.password = undefined;
-  const token = jwt.sign({ user }, process.env.JWT_SECRET);
+  const user = this.toObject();
+  delete user.password;
+  const token = jwt.sign(user, process.env.JWT_SECRET);
   return token;
 };
 
