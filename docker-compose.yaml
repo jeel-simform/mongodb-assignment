@@ -1,0 +1,30 @@
+version: '3.9'
+
+services:
+  # mongodb service
+  mongo_db:
+    container_name: db_container
+    image: mongo:latest
+    restart: always
+    ports:
+      - 2717:27017
+    volumes: 
+      - mongo_db:/data/db
+
+  # node API service
+  api:
+    build: .
+    ports:
+      - 3000:3000
+    environment:
+      PORT: 3000
+      DATABASE_URL: mongodb://db_container:27017/myapp
+      JWT_SECRET: thisissecretkey
+      JWT_EXPIRES_IN: 12000
+      JWT_COOKIE_EXPIRES_IN: 90
+      NODE_ENV: development
+    depends_on:
+      - mongo_db
+
+volumes:
+  mongo_db: {}
