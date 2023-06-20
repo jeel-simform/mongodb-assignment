@@ -1,15 +1,21 @@
 /* eslint-disable no-underscore-dangle */
 const Post = require("../model/Post");
+const { messages } = require("../utils/constant");
 
 const createPost = async (req, res, next) => {
   try {
     const { title, description } = req.body;
+    if (!title || !description) {
+      return res.status(400).json({
+        error: "title and description are required",
+      });
+    }
     const post = await Post.create({
       title,
       description,
-      creator: req.user._doc._id,
+      creator: req.user._id,
     });
-    return res.success("post created successfully", post);
+    return res.success(messages.POST_CREATED, post);
   } catch (err) {
     return next(err);
   }
@@ -18,7 +24,10 @@ const createPost = async (req, res, next) => {
 const myPosts = async (req, res, next) => {
   try {
     const post = await Post.find({ creator: req.user._id });
-    return res.success("Your All post", post);
+    if (!post) {
+      return res.notFound(messages.POST_NOT_FOUND);
+    }
+    return res.success(messages.POST_GET, post);
   } catch (err) {
     return next(err);
   }
@@ -27,7 +36,10 @@ const myPost = async (req, res, next) => {
   try {
     const { id } = req.params;
     const post = await Post.find({ creator: req.user._id, _id: id });
-    return res.success("Your Post", post);
+    if (!post) {
+      return res.notFound(messages.POST_NOT_FOUND);
+    }
+    return res.success(messages.POST_GET, post);
   } catch (err) {
     return next(err);
   }
@@ -38,7 +50,10 @@ const allPosts = async (req, res, next) => {
     const { page, limit, ...filter } = req.query;
     const skip = (page - 1) * limit;
     const post = await Post.find(filter).limit(limit).skip(skip);
-    return res.success("All post", post);
+    if (!post) {
+      return res.notFound(messages.POST_NOT_FOUND);
+    }
+    return res.success(messages.POST_GETS, post);
   } catch (err) {
     return next(err);
   }
@@ -63,7 +78,10 @@ const countPost = async (req, res, next) => {
         },
       },
     ]);
-    return res.success("Count Post", post);
+    if (!post) {
+      return res.notFound(messages.POST_NOT_FOUND);
+    }
+    return res.success(messages.POST_GET, post);
   } catch (err) {
     return next(err);
   }
@@ -94,7 +112,10 @@ const projectionPost = async (req, res, next) => {
         },
       },
     ]);
-    return res.success("project post", post);
+    if (!post) {
+      return res.notFound(messages.POST_NOT_FOUND);
+    }
+    return res.success(messages.POST_GET, post);
   } catch (err) {
     return next(err);
   }
@@ -103,7 +124,10 @@ const searchPost = async (req, res, next) => {
   try {
     const { search } = req.query;
     const posts = await Post.find({ $text: { $search: search } });
-    return res.success("", posts);
+    if (!posts) {
+      return res.notFound(messages.POST_NOT_FOUND);
+    }
+    return res.success(messages.POST_GET, posts);
   } catch (err) {
     return next(err);
   }
@@ -116,7 +140,10 @@ const updatePost = async (req, res, next) => {
       new: true,
       runValidator: true,
     });
-    return res.success("", post);
+    if (!post) {
+      return res.notFound(messages.POST_NOT_FOUND);
+    }
+    return res.success(messages.POST_UPDATE, post);
   } catch (err) {
     return next(err);
   }
@@ -124,8 +151,11 @@ const updatePost = async (req, res, next) => {
 const deletePost = async (req, res, next) => {
   try {
     const { id } = req.params;
-    await Post.findByIdAndDelete(id);
-    return res.success("Post deleted successfully");
+    const post = await Post.findByIdAndDelete(id);
+    if (!post) {
+      return res.notFound(messages.POST_NOT_FOUND);
+    }
+    return res.success(messages.POST_DELETE);
   } catch (err) {
     return next(err);
   }

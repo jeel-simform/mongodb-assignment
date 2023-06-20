@@ -18,18 +18,19 @@ const responseHelper = (req, res, next) => {
     });
   };
 
-  res.validationError = () => {
-    res.status(statusCode.NOT_FOUND).json({
-      code: statusCode.NOT_FOUND,
-      message: messages.VALIDATION_ERROR,
+  res.validationError = (message) => {
+    res.status(statusCode.BAD_REQUEST).json({
+      code: statusCode.BAD_REQUEST,
+      message,
     });
   };
-  res.missingCredentials = (message) => {
+  res.notFound = (message) => {
     res.status(statusCode.NOT_FOUND).json({
       code: statusCode.NOT_FOUND,
       message,
     });
   };
+
   next();
 };
 

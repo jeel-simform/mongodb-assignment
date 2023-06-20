@@ -10,7 +10,7 @@ const registerUserSchema = baseSchema.options({
   presence: "required",
 });
 
-const updateUserSchema = baseSchema.keys({});
+const updateUserSchema = baseSchema;
 
 const loginUserSchema = Joi.object({
   email: Joi.string().email().required(),
